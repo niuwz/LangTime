@@ -1,0 +1,9 @@
+einops==0.8.0
+matplotlib==3.8.4
+numpy==2.2.2
+pandas==2.2.3
+scikit_learn==1.4.2
+torch==2.3.0+cu118
+tqdm==4.66.4
+transformers==4.46.2
+deepspeed
