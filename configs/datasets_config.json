@@ -1,0 +1,95 @@
+{
+    "ETTh1": {
+        "data_path": "ETT-small/ETTh1.csv",
+        "target": "OT",
+        "freq": "h"
+    },
+    "ETTh2": {
+        "data_path": "ETT-small/ETTh2.csv",
+        "target": "OT",
+        "freq": "h"
+    },
+    "ETTm1": {
+        "data_path": "ETT-small/ETTm1.csv",
+        "target": "OT",
+        "freq": "15min"
+    },
+    "ETTm2": {
+        "data_path": "ETT-small/ETTm2.csv",
+        "target": "OT",
+        "freq": "15min"
+    },
+    "Weather": {
+        "data_path": "weather/weather.csv",
+        "target": "OT",
+        "freq": "10min",
+        "channel_split": 7
+    },
+    "Electricity": {
+        "data_path": "electricity/electricity.csv",
+        "target": "OT",
+        "freq": "h",
+        "channel_split": 7
+    },
+    "Exchange": {
+        "data_path": "exchange_rate/exchange_rate.csv",
+        "target": "OT",
+        "freq": "d"
+    },
+    "Traffic":{
+        "data_path": "traffic/traffic.csv",
+        "target": "OT",
+        "freq": "h",
+        "channel_split": 8
+    },
+    "Illness":{
+        "data_path": "illness/national_illness.csv",
+        "target": "OT",
+        "freq": "w"
+    },
+    "Traffic-eval":{
+        "data_path": "traffic/traffic.csv",
+        "target": "OT",
+        "freq": "h"
+    },
+    "Electricity-eval": {
+        "data_path": "electricity/electricity.csv",
+        "target": "OT",
+        "freq": "h"
+    },
+    "Weather-eval": {
+        "data_path": "weather/weather.csv",
+        "target": "OT",
+        "freq": "10min"
+    },
+    "ETTh1-eval": {
+        "data_path": "ETT-small/ETTh1.csv",
+        "target": "OT",
+        "freq": "h"
+    },
+    "ETTh2-eval": {
+        "data_path": "ETT-small/ETTh2.csv",
+        "target": "OT",
+        "freq": "h"
+    },
+    "ETTm1-eval": {
+        "data_path": "ETT-small/ETTm1.csv",
+        "target": "OT",
+        "freq": "15min"
+    },
+    "ETTm2-eval": {
+        "data_path": "ETT-small/ETTm2.csv",
+        "target": "OT",
+        "freq": "15min"
+    },
+    "Illness-eval": {
+        "data_path": "illness/national_illness.csv",
+        "target": "OT",
+        "freq": "w"
+    },
+    "Exchange-eval": {
+        "data_path": "exchange_rate/exchange_rate.csv",
+        "target": "OT",
+        "freq": "d"
+    }
+}
