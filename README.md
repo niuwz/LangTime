@@ -61,4 +61,4 @@ If you find our work useful, please consider citing:
 ```
 
 ## Contact
-If you have any questions or suggestions, feel free to open an issue or contact us via [email](niuwenzhe@tju.edu.cn).
+If you have any questions or suggestions, feel free to open an issue or contact us via niuwenzhe@tju.edu.cn
