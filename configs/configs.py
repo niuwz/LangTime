@@ -61,24 +61,24 @@ def get_args(parser: argparse.ArgumentParser, mode: Literal["pt", "rl", "eval"] 
     parser.add_argument(
         "--initial_lr", type=float, default=0.0001, help="optimizer learning rate"
     )
-    parser.add_argument("--lr_decay", type=float, default=0.01, help="")
-    parser.add_argument("--warmup_rate", type=float, default=0.05, help="")
+    parser.add_argument("--lr_decay", type=float, default=0.01, help="learning rate decay factor, e.g., 0.01 means the final LR will be 0.01 times the initial LR")
+    parser.add_argument("--warmup_rate", type=float, default=0.05, help="learning rate warmup percentage")
     parser.add_argument(
         "--loss_alpha",
         type=float,
         default=[0.3,],
         nargs="+",
-        help="",
+        help="controls the weight of reconstruction and prediction tasks in the loss.",
     )
     parser.add_argument(
         "--loss_alpha_type",
         type=str,
         default="fix",
         choices=["fix", "reduce"],
-        help="fix or reduce",
+        help="`fix` means always use the first value in `loss_alpha`, `reduce` means use values from `loss_alpha` list in order.",
     )
     parser.add_argument("--loss", type=str, default="MSE", help="loss function")
-    parser.add_argument("--huber_delta", type=float, default=0.5, help="loss function")
+    parser.add_argument("--huber_delta", type=float, default=0.5, help="controls the coefficient in Huber Loss. Not effective in MSE loss.")
 
     parser.add_argument(
         "--use_amp", action="store_true", help="use automatic mixed precision training"
@@ -88,33 +88,33 @@ def get_args(parser: argparse.ArgumentParser, mode: Literal["pt", "rl", "eval"] 
     )
 
     # model
-    parser.add_argument("--backbone", type=str, default="qwen2", help="")
+    parser.add_argument("--backbone", type=str, default="qwen2", help="type of LLM backbone, currently supports qwen2 and gpt2")
     parser.add_argument(
         "--backbone_path",
         type=str,
         required=True,
         default="",
-        help="",
+        help="path to the pre-trained model of LLM backbone",
     )
-    parser.add_argument("--use_flash_attn", action="store_true", help="")
-    parser.add_argument("--d_model", type=int, default=896, help="")
+    parser.add_argument("--use_flash_attn", action="store_true", help="whether to use flash attention to speed up model training")
+    parser.add_argument("--d_model", type=int, default=896, help="hidden dimension of the model")
 
     # PEFT
-    parser.add_argument("--lora_rank", type=int, default=32, help="")
-    parser.add_argument("--lora_alpha", type=int, default=32, help="")
-    parser.add_argument("--dropout", type=int, default=0.1, help="")
+    parser.add_argument("--lora_rank", type=int, default=32, help="rank for LoRA fine-tuning")
+    parser.add_argument("--lora_alpha", type=int, default=32, help="alpha parameter for LoRA fine-tuning")
+    parser.add_argument("--dropout", type=int, default=0.1, help="dropout parameter for LoRA fine-tuning")
 
     # TimeEncoder
-    parser.add_argument("--ts_enc", type=str, default="patch", help="")
-    parser.add_argument("--d_ff", type=int, default=4864, help="")
+    parser.add_argument("--ts_enc", type=str, default="patch", help="type of time series encoder")
+    parser.add_argument("--d_ff", type=int, default=4864, help="feed-forward network dimension of ts encoder")
     parser.add_argument("--activation", type=str, default="gelu", help="activation")
     parser.add_argument("--factor", type=int, default=1, help="")
-    parser.add_argument("--e_layers", type=int, default=1, help="")
+    parser.add_argument("--e_layers", type=int, default=1, help="number of layers in ts encoder")
     parser.add_argument("--output_attention", action="store_true", help="")
-    parser.add_argument("--n_heads", type=int, default=8, help="")
-    parser.add_argument("--num_kv_heads", type=int, default=2, help="")
+    parser.add_argument("--n_heads", type=int, default=8, help="number of attention heads in ts encoder")
+    parser.add_argument("--num_kv_heads", type=int, default=2, help="number of kv heads in ts encoder")
     # patch
-    parser.add_argument("--patch_size", type=int, default=16, help="")
+    parser.add_argument("--patch_size", type=int, default=16, help="patch size")
 
     # Q-Former
     parser.add_argument("--q_layers", type=int, default=1, help="layer of q-former")
@@ -166,7 +166,7 @@ def get_args(parser: argparse.ArgumentParser, mode: Literal["pt", "rl", "eval"] 
     parser.add_argument("--num_workers", type=int, default=10, help="")
     parser.add_argument("--scale", action="store_false", help="")
     parser.add_argument("--percent", type=int, default=100, help="")
-    parser.add_argument("--split", type=str, default=":", help="")
+    parser.add_argument("--split", type=str, default=":", help="proportion for splitting the training dataset, e.g., start:end")
 
     # GPU
     parser.add_argument("--use_gpu", type=bool, default=True, help="use gpu")
@@ -179,7 +179,7 @@ def get_args(parser: argparse.ArgumentParser, mode: Literal["pt", "rl", "eval"] 
     )
 
     # deepspeed
-    parser.add_argument("--deepspeed_config", type=str, default="", help="")
+    parser.add_argument("--deepspeed_config", type=str, default="", help="path to deepspeed config file")
     parser.add_argument(
         "--local_rank", type=int, default=-1, metavar="N", help="Local process rank."
     )
@@ -205,8 +205,8 @@ def get_args(parser: argparse.ArgumentParser, mode: Literal["pt", "rl", "eval"] 
     )
     if mode == "rl":
         # PPO
-        parser.add_argument("--upd_epochs", type=int, default=3, help="")
-        parser.add_argument("--kl_ctl", type=float, default=0.1, help="")
+        parser.add_argument("--upd_epochs", type=int, default=3, help="number of update epochs")
+        parser.add_argument("--kl_ctl", type=float, default=0.1, help="parameter for penalty term")
         parser.add_argument("--tau", type=float, default=0.1, help="")
         parser.add_argument("--clip_reward_value", type=float, default=5.0, help="")
         parser.add_argument("--cliprange", type=float, default=0.2, help="")
@@ -222,7 +222,7 @@ def get_args(parser: argparse.ArgumentParser, mode: Literal["pt", "rl", "eval"] 
             required=True,
             nargs="+",
             default=[96,],
-            help="",
+            help="list of sequence lengths for pre-training phase",
         )
 
     elif mode == "eval":
@@ -238,7 +238,7 @@ def get_args(parser: argparse.ArgumentParser, mode: Literal["pt", "rl", "eval"] 
             required=True,
             nargs="+",
             default=[96, 192, 336, 720],
-            help="",
+            help="list of sequence lengths for evaluation phase",
         )
 
     args = parser.parse_args()
