@@ -16,7 +16,6 @@ import torch.nn.functional as F
 import torch
 from torch import nn
 from einops import rearrange
-from transformers.models.qwen2 import Qwen2Config, Qwen2Model
 from copy import deepcopy
 import math
 from layers.Adapters import Linear_adapter
@@ -136,11 +135,9 @@ class LTModel(nn.Module):
         attn_implementation = (
             "flash_attention_2" if model_args.use_flash_attn else "eager"
         )
-        if "gpt" in model_args.backbone_path:
-            llm = "gpt2"
-        else:
-            llm = "qwen2"
+        llm = model_args.backbone.lower()
         if llm == "qwen2":
+            from transformers.models.qwen2 import Qwen2Config, Qwen2Model
             config = Qwen2Config.from_pretrained(
                 model_args.backbone_path, attn_implementation=attn_implementation, output_attentions=True
             )
@@ -248,7 +245,7 @@ class LTModel(nn.Module):
         prompt: b, c, len
         """
         bsz, _, c = x_ts.shape
-        # [bc, 1, d] in itrans [bc, n, d] in patch
+        # [bc, n, d]
         x_ts = self.ts_encoder(x_ts, x_mark_enc)
         # [bc, q_num, d]
         x_ts, x_prompt, x_mask = self.adapter(x_ts, x_prompt, x_mask, bsz)
