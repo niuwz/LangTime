@@ -6,4 +6,5 @@ scikit_learn==1.4.2
 torch==2.3.0+cu118
 tqdm==4.66.4
 transformers==4.46.2
+flash-attn==2.5.9.post1
 deepspeed
