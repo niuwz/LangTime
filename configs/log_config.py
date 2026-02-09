@@ -50,7 +50,7 @@ def setup_logging(log_file: str, logger_name="time_qwen", log_level=logging.DEBU
     elif log_file == "time":
         now = datetime.datetime.now()
         timestamp = now.strftime("%Y%m%d_%H%M%S")
-        # 生成文件名
+        # Generate filename
         file_name = f"logs/run_{timestamp}.log"
     elif log_file.endswith(".log"):
         file_name = log_file

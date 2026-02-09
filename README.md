@@ -40,8 +40,13 @@ pip install -r requirements.txt
 ### Running Examples
 You can run an example script to see LangTime in action. For instance, to train a model on a sample dataset:
 ```bash
-bash scripts/single_domain/ETTh1.sh
+# Example for single-domain pre-training
+bash scripts/pre-train/single_domain/ETTh1.sh
+# Example for multi-domain pre-training
+bash scripts/pre-train/mix_domain/mix.sh
 ```
+
+**Note**: Expect extended data loading times at the start of training, particularly for channel-rich datasets like `Electricity` or `Traffic`.
 
 ### Evaluation
 To evaluate a trained LangTime model, you can use the `run_eval.py` script. An example script is provided for convenience:

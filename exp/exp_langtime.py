@@ -91,6 +91,7 @@ class Exp_Mix(Exp_Basic):
         return model
 
     def _get_data(self, flag):
+        logger.info(f"Loading {flag} data... This may take a while, please be patient.")
         loaders = PreTrainDataloader(flag, self.args, self.tokenizer)
         return loaders
 
