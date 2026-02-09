@@ -14,7 +14,6 @@ from configs.log_config import get_logger
 logger = get_logger()
 plt.switch_backend("agg")
 
-
 def save_configs(args, save_name):
     if args.local_rank > 0:
         return ""
@@ -35,10 +34,10 @@ def save_configs(args, save_name):
     return f"Arguments have been saved to '{filename}'."
 
 def load_configs(config_path):
+    logger.info(f"Loading config from {config_path}")
     with open(config_path, "r") as f:
         config_dict = json.load(f)
     return config_dict
-
 
 def parser_deepspeed_config(ds_config_path, args):
     import deepspeed

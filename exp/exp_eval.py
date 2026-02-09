@@ -21,7 +21,6 @@ from shutil import rmtree
 warnings.filterwarnings("ignore")
 logger = get_logger()
 
-
 class Exp_Eval(Exp_Basic):
     def __init__(self, args):
         self._build_tokenizer(args.backbone_path)

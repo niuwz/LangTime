@@ -25,7 +25,7 @@ def get_args(parser: argparse.ArgumentParser, mode: Literal["pt", "rl", "eval"] 
         help="model name, options: [langtime, langtime_eval, langtime_rl]",
     )
     parser.add_argument("--task_id", type=str, default="pt")
-    parser.add_argument("--save_name", type=str, default="qwen")
+    parser.add_argument("--save_name", type=str, default="langtime")
     parser.add_argument(
         "--model_init", type=str, default="random", help="random or model path"
     )
@@ -66,7 +66,7 @@ def get_args(parser: argparse.ArgumentParser, mode: Literal["pt", "rl", "eval"] 
     parser.add_argument(
         "--loss_alpha",
         type=float,
-        default=[0.3,],
+        default=[0.5,],
         nargs="+",
         help="controls the weight of reconstruction and prediction tasks in the loss.",
     )
@@ -116,13 +116,14 @@ def get_args(parser: argparse.ArgumentParser, mode: Literal["pt", "rl", "eval"] 
     # patch
     parser.add_argument("--patch_size", type=int, default=16, help="patch size")
 
-    # Q-Former
+    ## Q-Former
+    # Q-Former related parameters are not used in the final version, and are reserved for future expansion
     parser.add_argument("--q_layers", type=int, default=1, help="layer of q-former")
     parser.add_argument(
         "--q_num", type=int, default=1, help="num of tarinable qureies in q-former"
     )
     parser.add_argument(
-        "--adapter_type", type=str, default="linear", help="t_former, q_former, linear"
+        "--adapter_type", type=str, default="linear", help="q_former, linear"
     )
 
     parser.add_argument(
@@ -163,7 +164,7 @@ def get_args(parser: argparse.ArgumentParser, mode: Literal["pt", "rl", "eval"] 
         help="path of dataset description",
     )
     parser.add_argument("--data_dir", type=str, default="./datasets/", help="")
-    parser.add_argument("--num_workers", type=int, default=10, help="")
+    parser.add_argument("--num_workers", type=int, default=0, help="")
     parser.add_argument("--scale", action="store_false", help="")
     parser.add_argument("--percent", type=int, default=100, help="")
     parser.add_argument("--split", type=str, default=":", help="proportion for splitting the training dataset, e.g., start:end")
