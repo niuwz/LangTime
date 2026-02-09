@@ -35,6 +35,13 @@ if __name__ == "__main__":
         args.domains = json.load(f)
     if args.domain[0].lower() != "mix":
         args.domains = {k: args.domains[k] for k in args.domain}
+
+    for key in list(args.domains.keys()):
+        if key.split("-")[-1] == "eval":
+            args.domains.pop(key)
+        elif key not in ["ETTh1", "ETTh2", "ETTm1", "ETTm2", "Electricity", "Weather", "Exchange"]:
+            args.domains.pop(key)
+
     args.backbone_config = PeftQwenConfig(
         lora_rank=args.lora_rank, lora_alpha=args.lora_alpha, lora_dropout=args.dropout
     )
