@@ -29,4 +29,4 @@ deepspeed --master_port 12345 --include localhost:0,1 \
     --num_workers 0 \
     --plot_img \
     --log_file $running_log \
-    --deepspeed_config configs/deepspeed/ds_z2_config.json > $running_out 2>&1
+    --deepspeed_config configs/deepspeed/ds_z2_config.json 2>&1 | tee $running_out
