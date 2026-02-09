@@ -240,6 +240,11 @@ def get_args(parser: argparse.ArgumentParser, mode: Literal["pt", "rl", "eval"] 
             default=[96, 192, 336, 720],
             help="list of sequence lengths for evaluation phase",
         )
+        parser.add_argument(
+            "--plot_img",
+            action="store_true",
+            help="whether to plot prediction images",
+        )
 
     args = parser.parse_args()
     return args

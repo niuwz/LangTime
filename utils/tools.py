@@ -34,6 +34,11 @@ def save_configs(args, save_name):
         json.dump(config_dict, json_file, ensure_ascii=False, indent=4)
     return f"Arguments have been saved to '{filename}'."
 
+def load_configs(config_path):
+    with open(config_path, "r") as f:
+        config_dict = json.load(f)
+    return config_dict
+
 
 def parser_deepspeed_config(ds_config_path, args):
     import deepspeed

@@ -7,7 +7,7 @@ import argparse
 import os
 import time
 import json
-from utils.tools import save_configs
+from utils.tools import save_configs, load_configs
 from configs.configs import PeftQwenConfig, get_args
 from configs.log_config import setup_logging
 
@@ -27,6 +27,31 @@ if __name__ == "__main__":
     args.use_gpu = args.use_gpu if torch.cuda.is_available() else False
     if args.use_gpu and args.use_multi_gpu:
         args.devices = eval(args.devices)
+
+    saved_model_configs = load_configs(
+        os.path.join(
+                args.checkpoints, args.model_init, "config.json"
+            )
+    )
+    load_keys = [
+        # model
+        "d_model",
+        "e_layers",
+        "d_ff",
+        "n_heads",
+        "ts_enc",
+        "patch_size",
+        "num_kv_heads",
+        "adapter_type",
+        "q_num",
+        "q_layers",
+        "single_pred_len",
+        # data
+        "features",
+    ]
+
+    for key in load_keys:
+        setattr(args, key, saved_model_configs[key])
 
     logger.info(vars(args))
     Exp = Exp_Eval
