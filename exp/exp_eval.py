@@ -1,6 +1,7 @@
 from exp.exp_basic import Exp_Basic
 from utils.tools import (
     rm_ds_checkpints,
+    extract_epoch_from_checkpoint_name,
 )
 from utils.metrics import metric
 import torch
@@ -126,9 +127,16 @@ class Exp_Eval(Exp_Basic):
 
     def _get_best_model_path(self, path):
         dirs = os.listdir(path)
-        checkpoint_dirs = [i for i in dirs if i.startswith("checkpoint-epoch")]
-        checkpoint_dirs.sort(key=lambda x: int(x[len("checkpoint-epoch") :]))
-        return checkpoint_dirs[-1]
+        # Filter out checkpoints that did not improve
+        improved_checkpoint_dirs = [i for i in dirs if i.startswith("checkpoint-epoch") and "-noimprove" not in i]
+        
+        if not improved_checkpoint_dirs:
+            # If no improved checkpoints, fall back to all checkpoints for selection (with a warning)
+            logger.warning("No improved checkpoints found. Falling back to all checkpoints for selection.")
+            improved_checkpoint_dirs = [i for i in dirs if i.startswith("checkpoint-epoch")]
+
+        improved_checkpoint_dirs.sort(key=extract_epoch_from_checkpoint_name)
+        return improved_checkpoint_dirs[-1]
 
     def convert_best_model(self, path):
         if self.use_ds and self.args.local_rank == 0:

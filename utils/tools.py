@@ -216,13 +216,15 @@ class EarlyStopping:
 
     def __call__(self, val_loss, model, path, use_ds=False, epoch=0):
         es_dicision = self.decision(val_loss)
+        is_improved = not es_dicision # True if val_loss improved, False otherwise
+        self.save_checkpoint(val_loss, model, path, use_ds, epoch, is_improved)
+
         if es_dicision:
             self.counter += 1
             logger.info(f"EarlyStopping counter: {self.counter} out of {self.patience}")
             if self.counter >= self.patience:
                 self.early_stop = True
         else:
-            self.save_checkpoint(val_loss, model, path, use_ds, epoch)
             self.counter = 0
 
     def decision(self, val_loss):
@@ -242,29 +244,60 @@ class EarlyStopping:
             val_flag = False
         return val_flag
 
-    def save_checkpoint(self, val_loss, model, path, use_ds, epoch):
-        if self.verbose:
-            logger.info(
-                f"Validation loss decreased ({self.val_loss_min:.6f} --> {val_loss:.6f}).  Saving model ..."
-            )
-        if use_ds:
-            model.save_checkpoint(path + "/" + f"checkpoint-epoch{epoch}")
+    def save_checkpoint(self, val_loss, model, path, use_ds, epoch, is_improved):
+        checkpoint_name = f"checkpoint-epoch{epoch}"
+        if not is_improved:
+            checkpoint_name += "-noimprove"
+            if self.verbose:
+                logger.info(
+                    f"Validation loss did not decrease ({self.val_loss_min:.6f} !> {val_loss:.6f}). Saving model as {checkpoint_name}..."
+                )
         else:
-            torch.save(model.fine_tune_state_dict(), path + "/" + "checkpoint.pth")
-        self.val_loss_min = val_loss
+            if self.verbose:
+                logger.info(
+                    f"Validation loss decreased ({self.val_loss_min:.6f} --> {val_loss:.6f}). Saving model as {checkpoint_name}..."
+                )
+            self.val_loss_min = val_loss # Only update val_loss_min if improved
+
+        if use_ds:
+            model.save_checkpoint(path + "/" + checkpoint_name)
+        else:
+            torch.save(model.fine_tune_state_dict(), path + "/" + checkpoint_name + ".pth")
+
+def extract_epoch_from_checkpoint_name(filename):
+    # Example: "checkpoint-epoch10" or "checkpoint-epoch10-noimprove"
+    parts = filename.split('-')
+    # The epoch number will be the last part if noimprove is present, or the second to last part
+    # if noimprove is not present (e.g., "epoch10" -> "10")
+    # This logic assumes the format is consistent.
+    if "noimprove" in filename:
+        epoch_str = parts[-2] # e.g., "epoch10" from "checkpoint-epoch10-noimprove"
+    else:
+        epoch_str = parts[-1] # e.g., "epoch10" from "checkpoint-epoch10"
+
+    # Remove "epoch" prefix
+    if epoch_str.startswith("epoch"):
+        epoch_str = epoch_str[len("epoch"):]
+    return int(epoch_str)
 
 
-def rm_ds_checkpints(path, res_nums=0):
+def rm_ds_checkpints(path, res_nums=0, convert_before_del=False):
     dirs = os.listdir(path)
     checkpoint_dirs = [i for i in dirs if i.startswith("checkpoint-epoch")]
     del_paths = []
     if len(checkpoint_dirs) > res_nums:
-        checkpoint_dirs.sort(key=lambda x: int(x[len("checkpoint-epoch") :]))
+        checkpoint_dirs.sort(key=extract_epoch_from_checkpoint_name)
         if res_nums > 0:
             checkpoint_dirs = checkpoint_dirs[:-res_nums]
         for d in checkpoint_dirs:
             dir_path = os.path.join(path, d)
             del_paths.append(d)
+            if convert_before_del:
+                from utils.zero_to_fp32 import convert_zero_checkpoint_to_fp32_state_dict
+                logger.info(f"Converting deepspeed checkpoint {dir_path} to fp32 state dict before deleting.")
+                convert_zero_checkpoint_to_fp32_state_dict(
+                dir_path, os.path.join(path, f"checkpoint-{d}.pth")
+                )
             shutil.rmtree(dir_path)
     return del_paths
 

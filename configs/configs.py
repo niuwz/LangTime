@@ -147,7 +147,7 @@ def get_args(parser: argparse.ArgumentParser, mode: Literal["pt", "rl", "eval"] 
         "--enc_mask",
         type=str,
         default="no",
-        help="time series mask, options:[no, fix:n]",
+        help="time series mask, options:[no, fix:n, anneal]",
     )
 
     # MixDataloader
