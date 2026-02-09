@@ -8,7 +8,6 @@
 </div>
 <br>
 
-
 ## Datasets
 You can access the well pre-processed datasets from [[Google Drive]](https://drive.google.com/file/d/1NF7VEefXCmXuWNbnNe858WvQAkJ_7wuP/view?usp=sharing).
 Please download the contents and place them under the `./dataset` directory in the project root.
@@ -42,6 +41,13 @@ pip install -r requirements.txt
 You can run an example script to see LangTime in action. For instance, to train a model on a sample dataset:
 ```bash
 bash scripts/single_domain/ETTh1.sh
+```
+
+### Evaluation
+To evaluate a trained LangTime model, you can use the `run_eval.py` script. An example script is provided for convenience:
+
+```bash
+bash scripts/eval/eval_example.sh
 ```
 
 
